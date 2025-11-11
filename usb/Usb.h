@@ -4,16 +4,6 @@
 #include "../../Common.h"
 #include "../../lib/commands/CommandErrors.h"
 
-class Usb {
-public:
-  // the initialization method must be present and named: void init();
-  void init();
-
-  bool command(char *reply, char *command, char *parameter, bool *supressFrame, bool *numericReply, CommandError *commandError);
-
-  //void loop();
-
-private:
   // Plugin config
   #define USB1_PIN                   OFF //    OFF, n. I/O pin controlling the port state.    Option
   #define USB1_NAME               "USB1" //    "USB..", Name of the device being controlled.  Option
@@ -23,9 +13,9 @@ private:
   #define USB2_NAME               "USB2" //    "USB..", Name of the device being controlled.  Option
   #define USB2_ON_STATE             HIGH //    HIGH, LOW Port control pin ON (active) state.  Option
   #define USB2_DEFAULT_STATE         OFF //    OFF, ON. State to startup in.                  Option
-  #define USB3_PIN                   OFF //    OFF, n. I/O pin controlling the port state.    Option
+  #define USB3_PIN                    27 //    OFF, n. I/O pin controlling the port state.    Option
   #define USB3_NAME               "USB3" //    "USB..", Name of the device being controlled.  Option
-  #define USB3_ON_STATE             HIGH //    HIGH, LOW Port control pin ON (active) state.  Option
+  #define USB3_ON_STATE              LOW //    HIGH, LOW Port control pin ON (active) state.  Option
   #define USB3_DEFAULT_STATE         OFF //    OFF, ON. State to startup in.                  Option
   #define USB4_PIN                   OFF //    OFF, n. I/O pin controlling the port state.    Option
   #define USB4_NAME               "USB4" //    "USB..", Name of the device being controlled.  Option
@@ -46,7 +36,13 @@ private:
   #define USB8_PIN                   OFF //    OFF, n. I/O pin controlling the port state.    Option
   #define USB8_NAME               "USB8" //    "USB..", Name of the device being controlled.  Option
   #define USB8_ON_STATE             HIGH //    HIGH, LOW Port control pin ON (active) state.  Option
-  #define USB8_DEFAULT_STATE         OFF //    OFF, ON. State to startup in.                  Option
+  #define USB8_DEFAULT_STATE         OFF //    OFF, ON. State to startup in.                  Option  Option
+
+class Usb {
+public:
+  // the initialization method must be present and named: void init();
+  void init();
+  bool command(char *reply, char *command, char *parameter, bool *supressFrame, bool *numericReply, CommandError *commandError);
 };
 
 typedef struct Port {

@@ -20,9 +20,6 @@ Port myPort[8] = {
 void Usb::init() {
   VLF("MSG: Plugins, starting: USB port switcher");
 
-  // start a task that runs every 10 seconds, run at priority level 7
-  //tasks.add(10000, 0, true, 7, usbWrapper);
-
   // get ready for USB port control
   #if defined(USB1_PIN) && (USB1_PIN != OFF)
     pinMode(USB1_PIN, OUTPUT);
@@ -49,9 +46,6 @@ void Usb::init() {
     pinMode(USB8_PIN, OUTPUT);
   #endif
 }
-
-// Our loop is deliberately empty as we only need command processing
-//void Usb::loop() {}
 
 // Command process is a copy and paste from Features.command.cpp with unwanted stripped out and names changed
 bool Usb::command(char *reply, char *command, char *parameter, bool *supressFrame, bool *numericReply, CommandError *commandError) {
