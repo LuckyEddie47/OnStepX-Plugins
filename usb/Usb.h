@@ -13,7 +13,7 @@
   #define USB2_NAME               "USB2" //    "USB..", Name of the device being controlled.  Option
   #define USB2_ON_STATE             HIGH //    HIGH, LOW Port control pin ON (active) state.  Option
   #define USB2_DEFAULT_STATE         OFF //    OFF, ON. State to startup in.                  Option
-  #define USB3_PIN                    27 //    OFF, n. I/O pin controlling the port state.    Option
+  #define USB3_PIN                   OFF //    OFF, n. I/O pin controlling the port state.    Option
   #define USB3_NAME               "USB3" //    "USB..", Name of the device being controlled.  Option
   #define USB3_ON_STATE              LOW //    HIGH, LOW Port control pin ON (active) state.  Option
   #define USB3_DEFAULT_STATE         OFF //    OFF, ON. State to startup in.                  Option

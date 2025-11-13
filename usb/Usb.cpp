@@ -1,10 +1,7 @@
 // USB port switching plugin
 
 #include "Usb.h"
-//#include "../../lib/tasks/OnTask.h"
 #include "../../lib/gpioEx/GpioEx.h"
-
-//void usbWrapper() { usb.loop(); }
 
 Port myPort[8] = {
       { USB1_NAME, USB1_PIN, USB1_DEFAULT_STATE, USB1_ON_STATE },
@@ -20,38 +17,22 @@ Port myPort[8] = {
 void Usb::init() {
   VLF("MSG: Plugins, starting: USB port switcher");
 
-  // get ready for USB port control
-  #if defined(USB1_PIN) && (USB1_PIN != OFF)
-    pinMode(USB1_PIN, OUTPUT);
-  #endif
-  #if defined(USB2_PIN) && (USB2_PIN != OFF)
-    pinMode(USB2_PIN, OUTPUT);
-  #endif
-  #if defined(USB3_PIN) && (USB3_PIN != OFF)
-    pinMode(USB3_PIN, OUTPUT);
-  #endif
-  #if defined(USB4_PIN) && (USB4_PIN != OFF)
-    pinMode(USB4_PIN, OUTPUT);
-  #endif
-  #if defined(USB5_PIN) && (USB5_PIN != OFF)
-    pinMode(USB5_PIN, OUTPUT);
-  #endif
-  #if defined(USB6_PIN) && (USB6_PIN != OFF)
-    pinMode(USB6_PIN, OUTPUT);
-  #endif
-  #if defined(USB7_PIN) && (USB7_PIN != OFF)
-    pinMode(USB7_PIN, OUTPUT);
-  #endif
-  #if defined(USB8_PIN) && (USB8_PIN != OFF)
-    pinMode(USB8_PIN, OUTPUT);
-  #endif
+  // set up USB port control
+  for (int i = 0; i < 8; i++) {
+    if (myPort[i].pin != OFF) {
+     pinMode(myPort[i].pin, OUTPUT);
+     myPort[i].value = (-1 - myPort[i].value);
+     digitalWriteEx(myPort[i].pin, myPort[i].value);
+    }
+  }
 }
 
 // Command process is a copy and paste from Features.command.cpp with unwanted stripped out and names changed
 bool Usb::command(char *reply, char *command, char *parameter, bool *supressFrame, bool *numericReply, CommandError *commandError) {
-  
+  *supressFrame = false;
+
   // Get USB commands
-  if (command[0] == 'G' && command[1] == 'U' && parameter[2] == 0) {
+  if (command[0] == 'G' && command[1] == 'U') {
     // :GUXn#
     // return status of USB port (1 for ON, 0 for OFF)
     if (parameter[0] == 'X') { 
@@ -60,7 +41,9 @@ bool Usb::command(char *reply, char *command, char *parameter, bool *supressFram
       char s[255];
         sprintf(s, "%d", myPort[i].value);
         strcat(reply, s);
-    } else 
+        *numericReply = false;
+        return true;
+    } else // end :GUXn# 
       
     // :GUY0#
     // return active USB ports in the form 00100111 where each digit is enabled/disabled
@@ -83,9 +66,9 @@ bool Usb::command(char *reply, char *command, char *parameter, bool *supressFram
       strcpy(s, myPort[i].name);
       if (strlen(s) > 10) s[10] = 0;
       strcpy(reply, s);
-
       *numericReply = false;
-    } else return false;
+      return true;
+    } else return false; // end :GUY...#
   } else
 
   // Set USB command
@@ -105,10 +88,12 @@ bool Usb::command(char *reply, char *command, char *parameter, bool *supressFram
       if (parameter[3] == 'V') {
         if (v >= 0 && v <= 1) { // value 0..1 for enabled or not
           digitalWriteEx(myPort[i].pin, v == myPort[i].active);
+          myPort[i].value = v;
+          return true;
         } else *commandError = CE_PARAM_RANGE;
       } else *commandError = CE_PARAM_FORM;
     } else return false;
-  } else return false;
+  } else return false; // end :SUX...#
 
   return true;
 }
