@@ -71,14 +71,14 @@ bool Usb::command(char *reply, char *command, char *parameter, bool *supressFram
     } else return false; // end :GUY...#
   } else
 
-  // Set USB command
+  // Set USB commands
   if (command[0] == 'S' && command[1] == 'U' && parameter[2] == ',') {
-    // :SUX[n],V[n]#
+    // :SUX[n],V[0|1]#
     // for example :SUX1,V1#
+    // special case :SUX0,V[0|1] # = switch all enabled ports
     if (parameter[0] == 'X') { 
       int i = parameter[1] - '1';
-      if (i < 0 || i > 7)  { *commandError = CE_PARAM_FORM; return true; }
-      if (myPort[i].pin == OFF) { *commandError = CE_CMD_UNKNOWN; return true; }
+      if (i < -1 || i > 7)  { *commandError = CE_PARAM_FORM; return true; }
 
       char* conv_end;
       float f = strtof(&parameter[4], &conv_end);
@@ -87,8 +87,19 @@ bool Usb::command(char *reply, char *command, char *parameter, bool *supressFram
 
       if (parameter[3] == 'V') {
         if (v >= 0 && v <= 1) { // value 0..1 for enabled or not
-          digitalWriteEx(myPort[i].pin, v == myPort[i].active);
-          myPort[i].value = v;
+          if (i == -1) {
+            // switch all enabled ports
+            for (int j = 0; j < 8; j++) {
+              if (myPort[j].pin != OFF) {
+                digitalWriteEx(myPort[j].pin, v == myPort[j].active);
+                myPort[j].value = v;
+              }
+            }
+          } else {
+            // switch single port
+            digitalWriteEx(myPort[i].pin, v == myPort[i].active);
+            myPort[i].value = v;
+          }
           return true;
         } else *commandError = CE_PARAM_RANGE;
       } else *commandError = CE_PARAM_FORM;

@@ -1,4 +1,8 @@
 // USB port switching plugin
+// Acts similar to a Feature SWITCH type
+// leaving all 8 Features available for other uses
+// PLUGIN[n]_COMMAND_PROCESSING must be set ON in Plugins.config.h
+
 #pragma once
 
 #include "../../Common.h"
@@ -36,11 +40,10 @@
   #define USB8_PIN                   OFF //    OFF, n. I/O pin controlling the port state.    Option
   #define USB8_NAME               "USB8" //    "USB..", Name of the device being controlled.  Option
   #define USB8_ON_STATE             HIGH //    HIGH, LOW Port control pin ON (active) state.  Option
-  #define USB8_DEFAULT_STATE         OFF //    OFF, ON. State to startup in.                  Option  Option
+  #define USB8_DEFAULT_STATE         OFF //    OFF, ON. State to startup in.                  Option
 
 class Usb {
 public:
-  // the initialization method must be present and named: void init();
   void init();
   bool command(char *reply, char *command, char *parameter, bool *supressFrame, bool *numericReply, CommandError *commandError);
 };
